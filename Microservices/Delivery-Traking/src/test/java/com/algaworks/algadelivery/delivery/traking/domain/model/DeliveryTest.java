@@ -40,7 +40,7 @@ class DeliveryTest {
                 .zipCode("00000-000")
                 .street("Rua São Paulo")
                 .number("100")
-                .complement("Sala 101")
+                .complement("Sala 401")
                 .name("João Silva")
                 .phone("(11) 00000-1234")
                 .build();

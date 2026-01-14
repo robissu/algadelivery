@@ -9,15 +9,15 @@ public enum DeliveryStatus {
     IN_TRANSIT(WAITING_FOR_COURIER),
     DELIVERY(IN_TRANSIT);
 
-    private final List<DeliveryStatus> previoustStatuses;
+    private final List<DeliveryStatus> previousStatuses;
 
     DeliveryStatus(DeliveryStatus... previousStatuses){
-        this.previoustStatuses = Arrays.asList(previousStatuses);
+        this.previousStatuses = Arrays.asList(previousStatuses);
     }
 
     public boolean canNotChangeTo(DeliveryStatus newStatus){
         DeliveryStatus current = this;
-        return !newStatus.previoustStatuses.contains(current);
+        return !newStatus.previousStatuses.contains(current);
     }
 
     public boolean canChangeTo(DeliveryStatus newStatus){
