@@ -9,6 +9,7 @@ import com.algaworks.algadelivery.courier.management.domain.service.CourierPayou
 import com.algaworks.algadelivery.courier.management.domain.service.CourierRegistrationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.util.Random;
 import java.util.UUID;
 
 @RestController
@@ -32,7 +34,7 @@ public class CourierController {
     private final CourierPayoutService courierPayoutService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus. CREATED)
+    @ResponseStatus(HttpStatus.CREATED)
     public Courier create(@Valid @RequestBody CourierInput input) {
         return courierRegistrationService.create(input);
     }
@@ -46,18 +48,28 @@ public class CourierController {
     @GetMapping
     public PagedModel<Courier> findAll(@PageableDefault Pageable pageable) {
         log.info("FindAll Request");
-        return new PagedModel<>(
-                courierRepository.findAll(pageable));
+        return new PagedModel<>(courierRepository.findAll(pageable));
     }
 
     @GetMapping("/{courierId}")
     public Courier findById(@PathVariable UUID courierId) {
         return courierRepository.findById(courierId)
-                .orElseThrow( ()-> new ResponseStatusException(HttpStatus. NOT_FOUND));
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping("/{payout-calculation}")
-    public CourierPayoutResultModel calculate(@RequestBody CourierPayoutCalculationInput input){
+    @SneakyThrows
+    @PostMapping("/payout-calculation")
+    public CourierPayoutResultModel calculate(
+            @RequestBody CourierPayoutCalculationInput input) {
+        log.info("Calculating");
+
+        if (Math.random() < 0.5) {
+            throw new RuntimeException();
+        }
+
+        int millis = new Random().nextInt(400);
+        Thread.sleep(millis);
+
         BigDecimal payoutFee = courierPayoutService.calculate(input.getDistanceInKm());
         return new CourierPayoutResultModel(payoutFee);
     }
